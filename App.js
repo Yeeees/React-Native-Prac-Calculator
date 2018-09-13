@@ -26,19 +26,17 @@ export default class App extends Component<Props> {
     if(text == '=') {
       const equation = this.state.calculatingText
       const lastCharOfEq = equation.substr(equation.length-1)
-      let alertCheck = 0
       if(this.opsArray.indexOf(lastCharOfEq) == -1) {
         this.setState({calculatedResult:eval(this.state.calculatingText)})
-        alertCheck = this.state.calculatedResult
+        if(eval(this.state.calculatingText) == 520) {
+          Alert.alert('嘬，我也爱你')
+        }
       }
       else {
         this.setState({calculatedResult:eval(equation.substring(0,equation.length-1))})
-        alertCheck = this.state.calculatedResult
       }
       console.log('last '+this.state.calculatedResult)
-      if(eval(this.state.calculatingText) == 520) {
-        Alert.alert('嘬，我也爱你')
-      }
+      
     }
     else {
       this.setState({calculatingText:this.state.calculatingText+text})
@@ -80,7 +78,7 @@ export default class App extends Component<Props> {
     for(let rowNum=0;rowNum<4;rowNum++) {
       let row = []
       for(let columNum=0;columNum<3;columNum++) {
-        row.push(<TouchableOpacity key={numArray[rowNum][columNum]} onPress={()=>this.numerBtnPressed(numArray[rowNum][columNum])} style={styles.buttonNumber}><Text>{numArray[rowNum][columNum]}</Text></TouchableOpacity>)
+        row.push(<TouchableOpacity key={numArray[rowNum][columNum]} onPress={()=>this.numerBtnPressed(numArray[rowNum][columNum])} style={styles.buttonNumber}><Text style={styles.btnText}>{numArray[rowNum][columNum]}</Text></TouchableOpacity>)
       }
       rows.push(<View key={rowNum} style={styles.numberRows}>{row}</View>)
     }
@@ -152,6 +150,9 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     justifyContent: 'center',
     
+  },
+  btnText: {
+    fontSize:30
   },
   numberRows: {
     flexDirection: 'row'
