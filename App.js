@@ -7,7 +7,7 @@
  */
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, Button, TouchableOpacity} from 'react-native';
+import {Platform, StyleSheet, Text, View, Button, TouchableOpacity, Alert} from 'react-native';
 
 
 type Props = {};
@@ -18,12 +18,27 @@ export default class App extends Component<Props> {
       calculatingText:'',
       calculatedResult:''
     }
+    this.opsArray=['Del','+','-','*','/']
   }
 
   numerBtnPressed(text) {
     console.log(text)
     if(text == '=') {
-      this.setState({calculatedResult:this.state.calculatingText})
+      const equation = this.state.calculatingText
+      const lastCharOfEq = equation.substr(equation.length-1)
+      let alertCheck = 0
+      if(this.opsArray.indexOf(lastCharOfEq) == -1) {
+        this.setState({calculatedResult:eval(this.state.calculatingText)})
+        alertCheck = this.state.calculatedResult
+      }
+      else {
+        this.setState({calculatedResult:eval(equation.substring(0,equation.length-1))})
+        alertCheck = this.state.calculatedResult
+      }
+      console.log('last '+this.state.calculatedResult)
+      if(eval(this.state.calculatingText) == 520) {
+        Alert.alert('嘬，我也爱你')
+      }
     }
     else {
       this.setState({calculatingText:this.state.calculatingText+text})
@@ -38,6 +53,23 @@ export default class App extends Component<Props> {
         //let newLine = this.state.calculatingText.slice(0.-1)
         let newLine =  this.state.calculatingText
         this.setState({calculatingText:newLine.substring(0,newLine.length-1)})
+        break
+      case '+':
+      case '-':
+      case '*':
+      case '/':
+        
+        let orgLine =  this.state.calculatingText
+        let lastChar = this.state.calculatingText.substr(orgLine.length-1)
+        console.log(this.state.calculatingText)
+        if(this.opsArray.indexOf(lastChar) != -1) {
+          this.setState({calculatingText:orgLine.substring(0,orgLine.length-1)+opsType})
+        }
+        else {
+          this.setState({calculatingText:this.state.calculatingText+opsType})
+        }
+        console.log("orgline "+orgLine)
+        console.log("lastchar "+lastChar)
     }
 
   }
@@ -48,15 +80,15 @@ export default class App extends Component<Props> {
     for(let rowNum=0;rowNum<4;rowNum++) {
       let row = []
       for(let columNum=0;columNum<3;columNum++) {
-        row.push(<TouchableOpacity onPress={()=>this.numerBtnPressed(numArray[rowNum][columNum])} style={styles.buttonNumber}><Text>{numArray[rowNum][columNum]}</Text></TouchableOpacity>)
+        row.push(<TouchableOpacity key={numArray[rowNum][columNum]} onPress={()=>this.numerBtnPressed(numArray[rowNum][columNum])} style={styles.buttonNumber}><Text>{numArray[rowNum][columNum]}</Text></TouchableOpacity>)
       }
-      rows.push(<View style={styles.numberRows}>{row}</View>)
+      rows.push(<View key={rowNum} style={styles.numberRows}>{row}</View>)
     }
 
     let ops = []
-    let opsArray = ['Del','+','-','X','/']
+    
     for(let i=0;i<5;i++) {
-      ops.push(<TouchableOpacity onPress={()=>this.opsPressed(opsArray[i])} style={styles.buttonNumber}><Text>{opsArray[i]}</Text></TouchableOpacity>)
+      ops.push(<TouchableOpacity key={this.opsArray[i]} onPress={()=>this.opsPressed(this.opsArray[i])} style={styles.buttonNumber}><Text>{this.opsArray[i]}</Text></TouchableOpacity>)
     }
     return(
       <View style={styles.container}>
